@@ -15,7 +15,7 @@ jobs:
       - name: Setup Dart SDK
         uses: dart-lang/setup-dart@v1.3
       - name: run dart scripts
-        env: # Or as an environment variable
+        env: 
           cossecretid: ${{ secrets.cossecretid }}
           cossecretkey: ${{ secrets.cossecretkey }}
         run: |

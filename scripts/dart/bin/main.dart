@@ -13,9 +13,6 @@ void main(List<String> arguments) async {
     var articlesDirPath = join(repoDir, "articles");
     print("start dart scripts");
     print("repo dir: $repoDir");
-    await shell.run("$coscli config add -b ybzhome-1256163827 -r ap-guangzhou -a ybzhome");
-    await shell.run("$coscli config set -i \$cossecretid");
-    await shell.run("$coscli config set -k \$cossecretkey");
     var categorys = <Map>[];
     var articlesDir = Directory(join(Directory.current.path, articlesDirPath));
     for (var item in articlesDir.listSync()) {
@@ -34,7 +31,7 @@ void main(List<String> arguments) async {
               var tempFile = File("./temp/${article["title"]}.json");
               tempFile.createSync(recursive: true);
               tempFile.writeAsStringSync(article["content"]);
-              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome/categorys/$categoryName/");
+              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/ -e cos.ap-guangzhou.myqcloud.com  -i \$cossecretid -k \$cossecretkey");
               tempFile.deleteSync();
             }
             article.remove("needUpload");
@@ -56,8 +53,7 @@ void main(List<String> arguments) async {
     File articleJsonFile = File(join(repoDir, "article.json"));
     articleJsonFile.writeAsStringSync(json, mode: FileMode.write);
 
-    await shell.run("$coscli cp ${articleJsonFile.path} cos://ybzhome/");
-    await shell.run("$coscli config delete -a ybzhome");
+    await shell.run("$coscli cp ${articleJsonFile.path} cos://ybzhome-1256163827/  -e cos.ap-guangzhou.myqcloud.com  -i \$cossecretid -k \$cossecretkey");
 
     print("exec done");
     exit(0);
