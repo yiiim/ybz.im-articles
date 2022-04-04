@@ -25,5 +25,6 @@ jobs:
           dart bin/main.dart
       - name: push
         uses: ad-m/github-push-action@master
-        github_token: ${{ secrets.my_github_token }}
-        branch: ${{ github.ref }}
+        with:
+          github_token: ${{ secrets.my_github_token }}
+          branch: ${{ github.ref }}
