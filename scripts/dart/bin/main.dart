@@ -8,8 +8,7 @@ import 'package:uuid/uuid.dart';
 void main(List<String> arguments) async {
   try {
     var shell = Shell(workingDirectory: "./");
-    print(JsonEncoder.withIndent('  ').convert(Platform.environment));
-    var repoDir = Platform.environment["github.workspace"]!;
+    var repoDir = Platform.environment["GITHUB_WORKSPACE"]!;
     var coscli = join(repoDir, "coscli");
     var articlesDirPath = join(repoDir, "articles");
     print("start dart scripts");
