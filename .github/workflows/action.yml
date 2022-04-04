@@ -1,0 +1,25 @@
+name: GitHub Actions Demo
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: install coscli
+        run: |
+          wget https://github.com/tencentyun/coscli/releases/download/v0.10.2-beta/coscli-linux
+          mv coscli-linux coscli
+          chmod 755 coscli
+          ./coscli --version
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1.3
+      - name: run dart scripts
+        env: # Or as an environment variable
+          cossecretid: ${{ secrets.cossecretid }}
+          cossecretkey: ${{ secrets.cossecretkey }}
+        run: |
+          cd ${{ github.workspace }}/scripts/dart
+          dart pub get
+          ls
+          dart bin/main.dart
