@@ -22,7 +22,7 @@ jobs:
           cd ${{ github.workspace }}/scripts/dart
           dart pub get
           ls
-          dart bin/main.dart
+          dart bin/main.dart -i $cossecretkey -k $cossecretkey
       - name: push
         uses: ad-m/github-push-action@master
         with:

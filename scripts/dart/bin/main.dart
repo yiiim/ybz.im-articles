@@ -16,6 +16,9 @@ void main(List<String> arguments) async {
     print(JsonEncoder.withIndent('  ').convert(Platform.environment));
     print("start dart scripts");
     print("repo dir: $repoDir");
+    print(arguments);
+    print(Platform.environment["cossecretid"]);
+    print(Platform.environment["cossecretkey"]);
     var categorys = <Map>[];
     var articlesDir = Directory(join(Directory.current.path, articlesDirPath));
     for (var item in articlesDir.listSync()) {
