@@ -13,6 +13,7 @@ void main(List<String> arguments) async {
     var scriptDir = join(repoDir, "scripts", "dart");
     var coscli = join(repoDir, "coscli");
     var articlesDirPath = join(repoDir, "articles");
+    print(JsonEncoder.withIndent('  ').convert(Platform.environment));
     print("start dart scripts");
     print("repo dir: $repoDir");
     var categorys = <Map>[];
