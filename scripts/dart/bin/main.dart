@@ -17,6 +17,8 @@ void main(List<String> arguments) async {
     print("start dart scripts");
     print("repo dir: $repoDir");
     print(arguments);
+    var cossecretid = Platform.environment["cossecretid"];
+    var cossecretkey = Platform.environment["cossecretkey"];
     print(Platform.environment["cossecretid"]);
     print(Platform.environment["cossecretkey"]);
     var categorys = <Map>[];
@@ -37,7 +39,7 @@ void main(List<String> arguments) async {
               var tempFile = File("./temp/${article["title"]}.json");
               tempFile.createSync(recursive: true);
               tempFile.writeAsStringSync(article["content"]);
-              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/ -e \"cos.ap-guangzhou.myqcloud.com\" -i \"\$cossecretid\" -k \"\$cossecretkey\" -c $scriptDir/cos.yaml");
+              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/ -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
               tempFile.deleteSync();
             }
             article.remove("needUpload");
