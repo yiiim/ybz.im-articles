@@ -31,7 +31,7 @@ void main(List<String> arguments) async {
               var tempFile = File("./temp/${article["title"]}.json");
               tempFile.createSync(recursive: true);
               tempFile.writeAsStringSync(article["content"]);
-              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/ -e \"cos.ap-guangzhou.myqcloud.com\" -i \"\$cossecretid\" -k \"\$cossecretkey\"");
+              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/ --endpoint \"cos.ap-guangzhou.myqcloud.com\" --sercret-id \"\$cossecretid\" --sercret-key \"\$cossecretkey\"");
               tempFile.deleteSync();
             }
             article.remove("needUpload");
@@ -53,7 +53,7 @@ void main(List<String> arguments) async {
     File articleJsonFile = File(join(repoDir, "article.json"));
     articleJsonFile.writeAsStringSync(json, mode: FileMode.write);
 
-    await shell.run("$coscli cp ${articleJsonFile.path} cos://ybzhome-1256163827/ -e \"cos.ap-guangzhou.myqcloud.com\" -i \"\$cossecretid\" -k \"\$cossecretkey\"");
+    await shell.run("$coscli cp ${articleJsonFile.path} cos://ybzhome-1256163827/ --endpoint \"cos.ap-guangzhou.myqcloud.com\" --sercret-id \"\$cossecretid\" --sercret-key \"\$cossecretkey\"");
 
     print("exec done");
     exit(0);
