@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 
 void main(List<String> arguments) async {
   try {
-    var shell = Shell(workingDirectory: "./");
+    var shell = Shell(workingDirectory: "./", environment: Platform.environment);
 
     var repoDir = Platform.environment["GITHUB_WORKSPACE"]!;
     var scriptDir = join(repoDir, "scripts", "dart");
