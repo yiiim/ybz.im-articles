@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:path/path.dart';
 import 'package:process_run/shell_run.dart';
+import 'package:quill_markdown/quill_markdown.dart';
 import 'package:uuid/uuid.dart';
 
 void main(List<String> arguments) async {
@@ -13,14 +14,11 @@ void main(List<String> arguments) async {
     var scriptDir = join(repoDir, "scripts", "dart");
     var coscli = join(repoDir, "coscli");
     var articlesDirPath = join(repoDir, "articles");
-    print(JsonEncoder.withIndent('  ').convert(Platform.environment));
     print("start dart scripts");
     print("repo dir: $repoDir");
     print(arguments);
     var cossecretid = Platform.environment["cossecretid"];
     var cossecretkey = Platform.environment["cossecretkey"];
-    print(Platform.environment["cossecretid"]);
-    print(Platform.environment["cossecretkey"]);
     var categorys = <Map>[];
     var articlesDir = Directory(join(Directory.current.path, articlesDirPath));
     for (var item in articlesDir.listSync()) {
@@ -108,9 +106,13 @@ Map outPutCategory(String path) {
         print("($categoryName-$articleName)文章有变动");
         article["needUpload"] = true;
         article["md5"] = articleMd5;
-        String articleContentJson = articleFile.readAsStringSync();
-        if (fileExtension == ".md") {}
-        if (fileExtension == ".json") {}
+        String articleContentJson = "";
+        if (fileExtension == ".md") {
+          articleContentJson = markdownToQuill(articleFile.readAsStringSync()) ?? "";
+        }
+        if (fileExtension == ".json") {
+          articleContentJson = articleFile.readAsStringSync();
+        }
         article["content"] = articleContentJson;
       }
       articles.add(article);
@@ -119,9 +121,4 @@ Map outPutCategory(String path) {
   category["articles"] = articles;
   category['children'] = children;
   return category;
-}
-
-String mdToQuillJson(String mdFilePath) {
-  var mdFile = File(mdFilePath);
-  return mdFile.readAsStringSync();
 }
