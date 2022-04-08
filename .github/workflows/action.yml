@@ -24,6 +24,11 @@ jobs:
           dart pub get
           ls
           dart bin/main.dart -i $cossecretkey -k $cossecretkey
+      - name: Commit files
+        run: |
+          git config --local user.email "ybz975218925@live.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Add changes" -a
       - name: push
         uses: ad-m/github-push-action@master
         with:
