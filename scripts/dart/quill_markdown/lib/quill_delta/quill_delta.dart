@@ -5,7 +5,6 @@
 library quill_delta;
 
 import 'dart:math' as math;
-import 'dart:ui' show hashList, hashValues;
 
 import 'package:collection/collection.dart';
 
@@ -40,8 +39,7 @@ class Operation {
   final String data;
 
   /// Rich-text attributes set by this operation, can be `null`.
-  Map<String, dynamic>? get attributes =>
-      _attributes == null ? null : new Map<String, dynamic>.from(_attributes!);
+  Map<String, dynamic>? get attributes => _attributes == null ? null : new Map<String, dynamic>.from(_attributes!);
   final Map<String, dynamic>? _attributes;
 
   Operation._(this.key, this.length, this.data, Map? attributes)
@@ -80,13 +78,11 @@ class Operation {
   factory Operation.delete(int length) => new Operation._(Operation.deleteKey, length, '', null);
 
   /// Creates operation which inserts [text] with optional [attributes].
-  factory Operation.insert(String text, [Map<String, dynamic>? attributes]) =>
-      new Operation._(Operation.insertKey, text.length, text, attributes);
+  factory Operation.insert(String text, [Map<String, dynamic>? attributes]) => new Operation._(Operation.insertKey, text.length, text, attributes);
 
   /// Creates operation which retains [length] of characters and optionally
   /// applies attributes.
-  factory Operation.retain(int? length, [Map<String, dynamic>? attributes]) =>
-      new Operation._(Operation.retainKey, length, '', attributes);
+  factory Operation.retain(int? length, [Map<String, dynamic>? attributes]) => new Operation._(Operation.retainKey, length, '', attributes);
 
   /// Returns value of this operation.
   ///
@@ -121,10 +117,7 @@ class Operation {
     if (identical(this, other)) return true;
     if (other is! Operation) return false;
     Operation typedOther = other;
-    return key == typedOther.key &&
-        length == typedOther.length &&
-        data == typedOther.data &&
-        hasSameAttributes(typedOther);
+    return key == typedOther.key && length == typedOther.length && data == typedOther.data && hasSameAttributes(typedOther);
   }
 
   /// Returns `true` if this operation has attribute specified by [name].
@@ -138,10 +131,10 @@ class Operation {
   @override
   int get hashCode {
     if (_attributes != null && _attributes!.isNotEmpty) {
-      int attrsHash = hashList(_attributes!.entries.map((e) => hashValues(e.key, e.value)));
-      return hashValues(key, value, attrsHash);
+      int attrsHash = Object.hashAll(_attributes!.entries.map((e) => Object.hash(e.key, e.value)));
+      return Object.hash(key, value, attrsHash);
     }
-    return hashValues(key, value);
+    return Object.hash(key, value);
   }
 
   @override
@@ -160,8 +153,7 @@ class Operation {
 /// it is a "change delta".
 class Delta {
   /// Transforms two attribute sets.
-  static Map<String, dynamic>? transformAttributes(
-      Map<String, dynamic>? a, Map<String, dynamic>? b, bool priority) {
+  static Map<String, dynamic>? transformAttributes(Map<String, dynamic>? a, Map<String, dynamic>? b, bool priority) {
     if (a == null) return b;
     if (b == null) return null;
 
@@ -176,8 +168,7 @@ class Delta {
   }
 
   /// Composes two attribute sets.
-  static Map<String, dynamic>? composeAttributes(Map<String, dynamic>? a, Map<String, dynamic>? b,
-      {bool keepNull: false}) {
+  static Map<String, dynamic>? composeAttributes(Map<String, dynamic>? a, Map<String, dynamic>? b, {bool keepNull: false}) {
     a ??= const {};
     b ??= const {};
 
@@ -194,8 +185,7 @@ class Delta {
   }
 
   ///get anti-attr result base on base
-  static Map<String, dynamic> invertAttributes(
-      Map<String, dynamic>? attr, Map<String, dynamic>? base) {
+  static Map<String, dynamic> invertAttributes(Map<String, dynamic>? attr, Map<String, dynamic>? base) {
     attr ??= const {};
     base ??= const {};
 
@@ -271,7 +261,7 @@ class Delta {
   }
 
   @override
-  int get hashCode => hashList(_operations);
+  int get hashCode => Object.hashAll(_operations);
 
   /// Retain [count] of characters from current position.
   void retain(int count, [Map<String, dynamic>? attributes]) {
@@ -620,9 +610,7 @@ class DeltaIterator {
       } else {
         _offset += actualLength;
       }
-      final String opData = op.isInsert
-          ? op.data.substring(_currentOffset as int, _currentOffset + (actualLength as int))
-          : '';
+      final String opData = op.isInsert ? op.data.substring(_currentOffset as int, _currentOffset + (actualLength as int)) : '';
       final int opLength = (opData.isNotEmpty) ? opData.length : actualLength as int;
       return Operation._(opKey, opLength, opData, opAttributes);
     }

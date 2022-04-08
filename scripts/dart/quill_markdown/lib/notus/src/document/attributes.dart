@@ -1,8 +1,6 @@
 // Copyright (c) 2018, the Zefyr project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
-import 'dart:ui' show hashList, hashValues;
 import 'package:collection/collection.dart';
 
 /// Scope of a style attribute, defines context in which an attribute can be
@@ -182,7 +180,7 @@ class NotusAttribute<T> implements NotusAttributeBuilder<T> {
   }
 
   @override
-  int get hashCode => hashValues(key, scope, value);
+  int get hashCode => Object.hash(key, scope, value);
 
   @override
   String toString() => '$key: $value';
@@ -293,10 +291,7 @@ class NotusStyle {
   }
 
   /// Returns JSON-serializable representation of this style.
-  Map<String, dynamic>? toJson() => _data.isEmpty
-      ? null
-      : _data.map<String, dynamic>(
-          (String _, NotusAttribute value) => MapEntry<String, dynamic>(value.key, value.value));
+  Map<String, dynamic>? toJson() => _data.isEmpty ? null : _data.map<String, dynamic>((String _, NotusAttribute value) => MapEntry<String, dynamic>(value.key, value.value));
 
   @override
   bool operator ==(Object other) {
@@ -309,8 +304,8 @@ class NotusStyle {
 
   @override
   int get hashCode {
-    final hashes = _data.entries.map((entry) => hashValues(entry.key, entry.value));
-    return hashList(hashes);
+    final hashes = _data.entries.map((entry) => Object.hash(entry.key, entry.value));
+    return Object.hashAll(hashes);
   }
 
   @override
@@ -389,8 +384,7 @@ class EmbedAttributeBuilder extends NotusAttributeBuilder<Map<String, dynamic>?>
   NotusAttribute<Map<String, dynamic>?> get unset => EmbedAttribute._(null);
 
   @override
-  NotusAttribute<Map<String, dynamic>?> withValue(Map<String, dynamic>? value) =>
-      EmbedAttribute._(value);
+  NotusAttribute<Map<String, dynamic>?> withValue(Map<String, dynamic>? value) => EmbedAttribute._(value);
 }
 
 /// Type of embedded content.
@@ -402,13 +396,11 @@ class EmbedAttribute extends NotusAttribute<Map<String, dynamic>?> {
   static const _kHorizontalRuleEmbed = 'hr';
   static const _kImageEmbed = 'image';
 
-  EmbedAttribute._(Map<String, dynamic>? value)
-      : super._(_kEmbed, NotusAttributeScope.inline, value);
+  EmbedAttribute._(Map<String, dynamic>? value) : super._(_kEmbed, NotusAttributeScope.inline, value);
 
   EmbedAttribute.horizontalRule() : this._(<String, dynamic>{'type': _kHorizontalRuleEmbed});
 
-  EmbedAttribute.image(String source)
-      : this._(<String, dynamic>{'type': _kImageEmbed, 'source': source});
+  EmbedAttribute.image(String source) : this._(<String, dynamic>{'type': _kImageEmbed, 'source': source});
 
   /// Type of this embed.
   EmbedType? get type {
@@ -426,20 +418,18 @@ class EmbedAttribute extends NotusAttribute<Map<String, dynamic>?> {
     if (identical(this, other)) return true;
     if (other is! EmbedAttribute) return false;
     EmbedAttribute typedOther = other;
-    return key == typedOther.key &&
-        scope == typedOther.scope &&
-        _kValueEquality.equals(value, typedOther.value);
+    return key == typedOther.key && scope == typedOther.scope && _kValueEquality.equals(value, typedOther.value);
   }
 
   @override
   int get hashCode {
     final objects = [key, scope];
     if (value != null) {
-      final valueHashes = value!.entries.map((entry) => hashValues(entry.key, entry.value));
+      final valueHashes = value!.entries.map((entry) => Object.hash(entry.key, entry.value));
       objects.addAll(valueHashes);
     } else {
       objects.add(value!);
     }
-    return hashList(objects);
+    return Object.hashAll(objects);
   }
 }
