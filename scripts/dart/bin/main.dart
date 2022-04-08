@@ -37,7 +37,7 @@ void main(List<String> arguments) async {
               var tempFile = File("./temp/${article["title"]}.json");
               tempFile.createSync(recursive: true);
               tempFile.writeAsStringSync(article["content"]);
-              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/ -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
+              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/${article["title"]}.json -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
               tempFile.deleteSync();
             }
             article.remove("needUpload");
@@ -59,7 +59,7 @@ void main(List<String> arguments) async {
     File articleJsonFile = File(join(repoDir, "article.json"));
     articleJsonFile.writeAsStringSync(json, mode: FileMode.write);
 
-    await shell.run("$coscli cp ${articleJsonFile.path} cos://ybzhome-1256163827/ -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
+    await shell.run("$coscli cp ${articleJsonFile.path} cos://ybzhome-1256163827/article.json -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
 
     print("exec done");
     exit(0);
