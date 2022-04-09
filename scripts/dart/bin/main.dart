@@ -34,10 +34,10 @@ void main(List<String> arguments) async {
         for (var article in articles) {
           if (article is Map) {
             if (article["needUpload"]) {
-              var tempFile = File("./temp/${article["title"]}.json");
+              var tempFile = File("./temp/${article["title"]}.jsonp");
               tempFile.createSync(recursive: true);
-              tempFile.writeAsStringSync(article["content"]);
-              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/${article["title"]}.json -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
+              tempFile.writeAsStringSync(jsonp(article["content"]));
+              await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/${article["title"]}.jsonp -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
               tempFile.deleteSync();
             }
             article.remove("needUpload");
@@ -59,7 +59,10 @@ void main(List<String> arguments) async {
     File articleJsonFile = File(join(repoDir, "article.json"));
     articleJsonFile.writeAsStringSync(json, mode: FileMode.write);
 
-    await shell.run("$coscli cp ${articleJsonFile.path} cos://ybzhome-1256163827/article.json -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
+    var tempJsonPFile = File(join(repoDir, "article.jsonp"));
+    tempJsonPFile.createSync();
+    tempJsonPFile.writeAsStringSync(jsonp(categorys));
+    await shell.run("$coscli cp ${tempJsonPFile.path} cos://ybzhome-1256163827/article.jsonp -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
 
     print("exec done");
     exit(0);
@@ -121,4 +124,9 @@ Map outPutCategory(String path) {
   category["articles"] = articles;
   category['children'] = children;
   return category;
+}
+
+String jsonp(dynamic obj, {String? jsonpCallbackName}) {
+  String p = obj is Map || obj is List ? jsonEncode(obj) : "\"${obj.toString()}\"";
+  return "${jsonpCallbackName?.trim() ?? "jsonpcallback"}($p)";
 }
