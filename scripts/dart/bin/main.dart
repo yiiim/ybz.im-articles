@@ -74,6 +74,8 @@ void main(List<String> arguments) async {
     await shell.run("$coscli cp ${tempJsonPFile.path} cos://ybzhome-1256163827/article.jsonp -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
     tempJsonPFile.deleteSync();
 
+    await shell.run("rm -rf \"$coscli\"");
+    await shell.run("rm -rf \"$coscli.log\"");
     print("exec done");
     exit(0);
   } catch (e) {
