@@ -23,7 +23,7 @@ jobs:
           cd ${{ github.workspace }}/scripts/dart
           dart pub get
           ls
-          dart bin/main.dart -i $cossecretkey -k $cossecretkey
+          dart bin/main.dart
       - name: Commit files
         run: |
           git config --local user.email "ybz975218925@live.com"

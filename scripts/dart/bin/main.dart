@@ -6,17 +6,15 @@ import 'package:process_run/shell_run.dart';
 import 'package:quill_markdown/quill_markdown.dart';
 import 'package:uuid/uuid.dart';
 
+var repoDir = Platform.environment["GITHUB_WORKSPACE"]!;
 void main(List<String> arguments) async {
   try {
     var shell = Shell(workingDirectory: "./", environment: Platform.environment);
-
-    var repoDir = Platform.environment["GITHUB_WORKSPACE"]!;
     var scriptDir = join(repoDir, "scripts", "dart");
     var coscli = join(repoDir, "coscli");
     var articlesDirPath = join(repoDir, "articles");
     print("start dart scripts");
     print("repo dir: $repoDir");
-    print(arguments);
     var cossecretid = Platform.environment["cossecretid"];
     var cossecretkey = Platform.environment["cossecretkey"];
     var categorys = <Map>[];
@@ -44,10 +42,9 @@ void main(List<String> arguments) async {
             article.remove("needUpload");
             article.remove("content");
 
-            var articleDataFile = File(join(dirname(article["path"]!), ".$articleName.json"));
+            var articleDataFile = File(join(repoDir, dirname(article["path"]!), ".$articleName.json"));
             if (articleDataFile.existsSync() == false) articleDataFile.createSync(recursive: true);
-            articleDataFile.writeAsStringSync(jsonEncode(article));
-            print("更新文章数据文件成功：${articleDataFile.path}");
+            articleDataFile.writeAsStringSync(JsonEncoder.withIndent('  ').convert(article));
           }
         }
       }
@@ -56,23 +53,22 @@ void main(List<String> arguments) async {
           await initCategory(item);
         }
       }
-      var categoryDataFile = File(join(category["path"]!, ".$categoryName.json"));
+      var categoryDataFile = File(join(repoDir, category["path"]!, ".$categoryName.json"));
       if (categoryDataFile.existsSync() == false) categoryDataFile.createSync(recursive: true);
-      categoryDataFile.writeAsStringSync(jsonEncode(category));
-      print("更新分类数据文件成功：${categoryDataFile.path}");
+      categoryDataFile.writeAsStringSync(JsonEncoder.withIndent('  ').convert(category));
     }
 
     for (var category in categorys) {
       await initCategory(category);
     }
-    var json = jsonEncode(categorys);
     File articleJsonFile = File(join(repoDir, "article.json"));
-    articleJsonFile.writeAsStringSync(json, mode: FileMode.write);
+    articleJsonFile.writeAsStringSync(JsonEncoder.withIndent('  ').convert(categorys), mode: FileMode.write);
 
     var tempJsonPFile = File(join(repoDir, "article.jsonp"));
     tempJsonPFile.createSync();
     tempJsonPFile.writeAsStringSync(jsonp(categorys));
     await shell.run("$coscli cp ${tempJsonPFile.path} cos://ybzhome-1256163827/article.jsonp -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
+    tempJsonPFile.deleteSync();
 
     print("exec done");
     exit(0);
@@ -95,10 +91,11 @@ Map outPutCategory(String path) {
       "id": Uuid().v4(),
       "create_date": DateTime.now().millisecondsSinceEpoch,
       "create_by": "ybz",
-      "title": categoryName,
+      "name": categoryName,
     };
   }
-  category["path"] = path;
+  category["name"] = categoryName;
+  category["path"] = path.replaceFirst("^$repoDir", "");
   var children = [];
   var articles = [];
   for (var item in Directory(path).listSync()) {
@@ -125,7 +122,8 @@ Map outPutCategory(String path) {
           "title": articleName,
         };
       }
-      article["path"] = item.path;
+      article["title"] = articleName;
+      article["path"] = item.path.replaceFirst("^$repoDir", "");
       print("($categoryName-$articleName)文章属性：");
       print(JsonEncoder.withIndent('  ').convert(article));
       String articleMd5 = md5.convert(articleFile.readAsBytesSync().toList()).toString();
