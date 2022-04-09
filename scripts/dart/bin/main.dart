@@ -28,10 +28,14 @@ void main(List<String> arguments) async {
       var categoryName = category["name"];
       var articles = category["articles"];
       var children = category["children"];
+      var categoryPath = category["path"]!;
+      category.remove("path");
       if (articles != null && articles is List) {
         for (var article in articles) {
           if (article is Map) {
             var articleName = article["title"];
+            var articlePath = article["path"]!;
+            article.remove("path");
             if (article["needUpload"] == true) {
               var tempFile = File("./temp/${article["title"]}.jsonp");
               tempFile.createSync(recursive: true);
@@ -42,9 +46,7 @@ void main(List<String> arguments) async {
               article.remove("needUpload");
               article.remove("content");
             }
-            var path = article["path"]!;
-            article.remove("path");
-            var articleDataFile = File(join(dirname(path), ".$articleName.json"));
+            var articleDataFile = File(join(dirname(articlePath), ".$articleName.json"));
             if (articleDataFile.existsSync() == false) articleDataFile.createSync(recursive: true);
             articleDataFile.writeAsStringSync(JsonEncoder.withIndent('  ').convert(article));
           }
@@ -55,9 +57,7 @@ void main(List<String> arguments) async {
           await initCategory(item);
         }
       }
-      var path = category["path"]!;
-      category.remove("path");
-      var categoryDataFile = File(join(path, ".$categoryName.json"));
+      var categoryDataFile = File(join(categoryPath, ".$categoryName.json"));
       if (categoryDataFile.existsSync() == false) categoryDataFile.createSync(recursive: true);
       categoryDataFile.writeAsStringSync(JsonEncoder.withIndent('  ').convert(category));
     }
