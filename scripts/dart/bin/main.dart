@@ -33,6 +33,7 @@ void main(List<String> arguments) async {
       if (articles != null && articles is List) {
         for (var article in articles) {
           if (article is Map) {
+            var articleName = article["title"];
             if (article["needUpload"]) {
               var tempFile = File("./temp/${article["title"]}.jsonp");
               tempFile.createSync(recursive: true);
@@ -42,6 +43,10 @@ void main(List<String> arguments) async {
             }
             article.remove("needUpload");
             article.remove("content");
+
+            var articleDataFile = File(join(dirname(article["path"]!), ".$articleName.json"));
+            if (articleDataFile.existsSync() == false) articleDataFile.createSync(recursive: true);
+            articleDataFile.writeAsStringSync(jsonEncode(article));
           }
         }
       }
@@ -50,6 +55,9 @@ void main(List<String> arguments) async {
           await initCategory(item);
         }
       }
+      var categoryDataFile = File(join(category["path"]!, ".$categoryName.json"));
+      if (categoryDataFile.existsSync() == false) categoryDataFile.createSync(recursive: true);
+      categoryDataFile.writeAsStringSync(jsonEncode(category));
     }
 
     for (var category in categorys) {
@@ -75,7 +83,20 @@ void main(List<String> arguments) async {
 Map outPutCategory(String path) {
   var categoryName = basename(path);
   print("正在检查分类：$categoryName");
-  Map<String, dynamic> category = {"name": categoryName};
+  var categoryDataFile = File(join(path, ".$categoryName.json"));
+  Map<String, dynamic> category = {};
+  if (categoryDataFile.existsSync()) {
+    category = jsonDecode(categoryDataFile.readAsStringSync());
+  } else {
+    print("($categoryName)新分类！");
+    category = {
+      "id": Uuid().v4(),
+      "create_date": DateTime.now().millisecondsSinceEpoch,
+      "create_by": "ybz",
+      "title": categoryName,
+    };
+  }
+  category["path"] = path;
   var children = [];
   var articles = [];
   for (var item in Directory(path).listSync()) {
@@ -102,6 +123,7 @@ Map outPutCategory(String path) {
           "title": articleName,
         };
       }
+      article["path"] = item.path;
       print("($categoryName-$articleName)文章属性：");
       print(JsonEncoder.withIndent('  ').convert(article));
       String articleMd5 = md5.convert(articleFile.readAsBytesSync().toList()).toString();
