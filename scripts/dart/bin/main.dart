@@ -42,7 +42,9 @@ void main(List<String> arguments) async {
               article.remove("needUpload");
               article.remove("content");
             }
-            var articleDataFile = File(join(repoDir, dirname(article["path"]!), ".$articleName.json"));
+            var path = article["path"]!;
+            article.remove("path");
+            var articleDataFile = File(join(dirname(path), ".$articleName.json"));
             if (articleDataFile.existsSync() == false) articleDataFile.createSync(recursive: true);
             articleDataFile.writeAsStringSync(JsonEncoder.withIndent('  ').convert(article));
           }
@@ -53,7 +55,9 @@ void main(List<String> arguments) async {
           await initCategory(item);
         }
       }
-      var categoryDataFile = File(join(repoDir, category["path"]!, ".$categoryName.json"));
+      var path = category["path"]!;
+      category.remove("path");
+      var categoryDataFile = File(join(path, ".$categoryName.json"));
       if (categoryDataFile.existsSync() == false) categoryDataFile.createSync(recursive: true);
       categoryDataFile.writeAsStringSync(JsonEncoder.withIndent('  ').convert(category));
     }
@@ -95,7 +99,7 @@ Map outPutCategory(String path) {
     };
   }
   category["name"] = categoryName;
-  category["path"] = path.replaceFirst("^$repoDir", "");
+  category["path"] = path;
   var children = [];
   var articles = [];
   for (var item in Directory(path).listSync()) {
@@ -123,7 +127,7 @@ Map outPutCategory(String path) {
         };
       }
       article["title"] = articleName;
-      article["path"] = item.path.replaceFirst("^$repoDir", "");
+      article["path"] = item.path;
       print("($categoryName-$articleName)文章属性：");
       print(JsonEncoder.withIndent('  ').convert(article));
       String articleMd5 = md5.convert(articleFile.readAsBytesSync().toList()).toString();
