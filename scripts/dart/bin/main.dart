@@ -47,6 +47,7 @@ void main(List<String> arguments) async {
             var articleDataFile = File(join(dirname(article["path"]!), ".$articleName.json"));
             if (articleDataFile.existsSync() == false) articleDataFile.createSync(recursive: true);
             articleDataFile.writeAsStringSync(jsonEncode(article));
+            print("更新文章数据文件成功：${articleDataFile.path}");
           }
         }
       }
@@ -58,6 +59,7 @@ void main(List<String> arguments) async {
       var categoryDataFile = File(join(category["path"]!, ".$categoryName.json"));
       if (categoryDataFile.existsSync() == false) categoryDataFile.createSync(recursive: true);
       categoryDataFile.writeAsStringSync(jsonEncode(category));
+      print("更新分类数据文件成功：${categoryDataFile.path}");
     }
 
     for (var category in categorys) {
@@ -145,6 +147,8 @@ Map outPutCategory(String path) {
   }
   category["articles"] = articles;
   category['children'] = children;
+  print("($categoryName)分类属性：");
+  print(JsonEncoder.withIndent('  ').convert(category));
   return category;
 }
 
