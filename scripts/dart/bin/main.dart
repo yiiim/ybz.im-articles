@@ -155,6 +155,6 @@ Map outPutCategory(String path) {
 }
 
 String jsonp(dynamic obj, {String? jsonpCallbackName}) {
-  String p = obj is Map || obj is List ? jsonEncode(obj) : "\"${obj.toString()}\"";
+  String p = obj is Map || obj is List ? jsonEncode(obj) : jsonEncode({"data": obj.toString()});
   return "${jsonpCallbackName?.trim() ?? "jsonpcallback"}($p)";
 }
