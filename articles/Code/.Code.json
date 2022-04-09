@@ -3,14 +3,12 @@
   "create_date": 1649500372671,
   "create_by": "ybz",
   "name": "Code",
-  "path": "/home/runner/work/ybz.im-articles/ybz.im-articles/articles/Code",
   "articles": [
     {
       "id": "ff055b24-4ee2-4a10-810b-c27109fe673a",
       "create_date": 1649499492429,
       "create_by": "ybz",
       "title": "Test1",
-      "path": "/home/runner/work/ybz.im-articles/ybz.im-articles/articles/Code/Test1.md",
       "md5": "8a6c92cc92bca46279a2dc6e5550eaec"
     },
     {
@@ -18,7 +16,6 @@
       "create_date": 1649499492470,
       "create_by": "ybz",
       "title": "test",
-      "path": "/home/runner/work/ybz.im-articles/ybz.im-articles/articles/Code/test.md",
       "md5": "1835eca8a52791b38de7d4f3d1f5d4d5"
     }
   ],
