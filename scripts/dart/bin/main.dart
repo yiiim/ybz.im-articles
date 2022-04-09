@@ -32,16 +32,16 @@ void main(List<String> arguments) async {
         for (var article in articles) {
           if (article is Map) {
             var articleName = article["title"];
-            if (article["needUpload"]) {
+            if (article["needUpload"] == true) {
               var tempFile = File("./temp/${article["title"]}.jsonp");
               tempFile.createSync(recursive: true);
               tempFile.writeAsStringSync(jsonp(article["content"]));
               await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/${article["title"]}.jsonp -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
               tempFile.deleteSync();
-            }
-            article.remove("needUpload");
-            article.remove("content");
 
+              article.remove("needUpload");
+              article.remove("content");
+            }
             var articleDataFile = File(join(repoDir, dirname(article["path"]!), ".$articleName.json"));
             if (articleDataFile.existsSync() == false) articleDataFile.createSync(recursive: true);
             articleDataFile.writeAsStringSync(JsonEncoder.withIndent('  ').convert(article));
