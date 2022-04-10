@@ -39,7 +39,7 @@ void main(List<String> arguments) async {
             if (article["needUpload"] == true) {
               var tempFile = File("./temp/${article["title"]}.jsonp");
               tempFile.createSync(recursive: true);
-              tempFile.writeAsStringSync(jsonp(article["content"]));
+              tempFile.writeAsStringSync(jsonp(article["content"], jsonpCallbackName: "didGetArticle"));
               await shell.run("$coscli cp ${tempFile.path} cos://ybzhome-1256163827/categorys/$categoryName/${article["title"]}.jsonp -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
               tempFile.deleteSync();
 
@@ -70,7 +70,7 @@ void main(List<String> arguments) async {
 
     var tempJsonPFile = File(join(repoDir, "article.jsonp"));
     tempJsonPFile.createSync();
-    tempJsonPFile.writeAsStringSync(jsonp(categorys));
+    tempJsonPFile.writeAsStringSync(jsonp(categorys, jsonpCallbackName: "didGetCategorys"));
     await shell.run("$coscli cp ${tempJsonPFile.path} cos://ybzhome-1256163827/article.jsonp -e \"cos.ap-guangzhou.myqcloud.com\" -i \"$cossecretid\" -k \"$cossecretkey\" -c $scriptDir/cos.yaml");
     tempJsonPFile.deleteSync();
 
